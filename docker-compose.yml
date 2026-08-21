@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16
+    container_name: turnos_estetica_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: turnos_user
+      POSTGRES_PASSWORD: turnos_pass
+      POSTGRES_DB: turnos_estetica
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      # Monta el script SQL para que se ejecute automáticamente
+      # la primera vez que se crea el contenedor
+      - ./turnos_estetica_schema.sql:/docker-entrypoint-initdb.d/init.sql
+ 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: turnos_estetica_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+ 
+volumes:
+  db_data:
+ 
